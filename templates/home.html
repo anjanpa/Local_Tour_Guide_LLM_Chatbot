@@ -101,33 +101,23 @@
                         </div>
                         <div class="card-body">
 
-                            <div class="d-flex flex-row justify-content-start mb-4">
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                    alt="avatar 1" style="width: 45px; height: 100%;">
-                                <div class="p-3 ms-3"
-                                    style="border-radius: 15px; background-color: rgba(57, 192, 237,.2);">
-                                    <p class="small mb-0">Hi, I am your guide. How can I help you?</p>
+                            <div id="chat-container" style="overflow-y:scroll;height:360px;">
+
+                               <div class="d-flex flex-row justify-content-start mb-4">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+                                <div class="p-3 ms-3 border bg-body-tertiary" style="border-radius: 15px;">
+                                    <p class="small mb-0">Hi! How may I help you?</p>
                                 </div>
+                               </div>
                             </div>
 
-                            <div class="d-flex flex-row justify-content-end mb-4">
-                                <div class="p-3 me-3 border bg-body-tertiary" style="border-radius: 15px;">
-                                    <p class="small mb-0">{{message}}</p>
-                                </div>
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
-                                    alt="avatar 1" style="width: 45px; height: 100%;">
+                            <div data-mdb-input-init class="form-outline">
+                                <textarea class="form-control bg-body-tertiary" id="textAreaExample" name="message"
+                                    rows="4"></textarea>
+                                <label class="form-label" for="textAreaExample">Type your message</label>
                             </div>
+                            <button type="submit" id="wssubmit" class="btn btn-primary mt-3">Submit</button>
 
-                            <form method="POST" action="{% url 'home' %}">
-                                {% csrf_token %}
-                                
-                                <div data-mdb-input-init class="form-outline">
-                                    <textarea class="form-control bg-body-tertiary" id="textAreaExample" name="message" rows="4"></textarea>
-                                    <label class="form-label" for="textAreaExample">Type your message</label>
-                                </div>
-                                <button type="submit" class="btn btn-primary mt-3">Submit</button>
-                            </form>
-                            
 
                         </div>
                     </div>
@@ -137,6 +127,77 @@
 
         </div>
     </section>
+
+    <script>
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        var ws = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ch/'
+        );
+        ws.onopen = function (event) {
+            console.log('Connected to Server');
+        };
+        document.getElementById('wssubmit').onclick =
+            function (event) {
+                const messageInputDom = document.getElementById('textAreaExample');
+                const message = messageInputDom.value;
+                ws.send(JSON.stringify({
+                    "msg": message
+                }));
+
+                let newMessageDiv = document.createElement('div');
+                newMessageDiv.classList.add('d-flex', 'flex-row', 'justify-content-start', 'mb-4');
+
+                // Create the inner content of the message
+                newMessageDiv.innerHTML = `
+                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+                    <div class="p-3 ms-3 border bg-body-tertiary" style="border-radius: 15px;">
+                        <p class="small mb-0">${message}</p>
+                    </div>
+                   
+                `;
+
+                // Append the new message to the chat container (assumed to have an id 'chat-container')
+                document.getElementById('chat-container').appendChild(newMessageDiv);
+                scrollToBottom();
+            };
+
+        ws.onmessage = function (event) {
+            console.log("Message received from server", event.data);
+            console.log("type of message received...", typeof (event.data));
+
+            // Assuming the server sends JSON data
+            const data = event.data;
+            console.log("Parsed Data.....", data);
+            console.log("type of parsed data", typeof (data));
+
+            // Create a new message div element
+            let newMessageDiv = document.createElement('div');
+            newMessageDiv.classList.add('d-flex', 'flex-row', 'justify-content-end', 'mb-4');
+
+            // Create the inner content of the message
+            newMessageDiv.innerHTML = `
+                <div class="p-3 me-3 border bg-body-tertiary" style="border-radius: 15px;">
+                    <p class="small mb-0">${data}</p>
+                </div>
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+            `;
+
+            // Append the new message to the chat container (assumed to have an id 'chat-container')
+            document.getElementById('chat-container').appendChild(newMessageDiv);
+            scrollToBottom();
+
+        };
+
+        ws.onclose = function (event) {
+            console.log("Websocket connection closed unexpectedly...", event);
+        };
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
