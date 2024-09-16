@@ -1,25 +1,30 @@
-from channels.consumer import SyncConsumer
+from channels.consumer import AsyncConsumer
 import json
 from .views.view_context_search import search_context
+from .views.view_intent_search import search_intent
 from .views.view_gqa import generate_response
 
-class MySyncConsumer(SyncConsumer):
-    def websocket_connect(self,event):
-        self.send({"type": "websocket.accept"})
+class ChatConsumer(AsyncConsumer):
+    async def websocket_connect(self,event):
+        await self.send({"type": "websocket.accept"})
 
-    def websocket_receive(self,event):
-        print("Client message received:",event)
+    async def websocket_receive(self,event):
+        # print("Client message received:",event)
         text=event.get('text')
         text=json.loads(text)
         msg=text['msg'] 
         reply=search_context(msg)
+        # intents=search_intent(msg)
         response=generate_response(f"Context: {reply[0]} Question:{msg}")
         try:
-            self.send({
+            await self.send({
                 "type": "websocket.send",
-                "text": f"{response}"
+                "text":json.dumps({
+                    "response":response
+                })
             })
         except:
             print("An error occurred while sending message to client")  
-    def websocket_disconnect(self, event):
-        raise StopConsumer()
+    
+    async def websocket_disconnect(self, event):
+        print("Connection stopped")
