@@ -1,5 +1,5 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration
-
+from .view_load_lora_params import load_lora_params 
 ## Loading required model and tokenizer
 var_model = T5ForConditionalGeneration.from_pretrained('t5-base')
 tokenizer = T5Tokenizer.from_pretrained('t5-base',clean_up_tokenization_spaces=True,legacy=False)
@@ -7,13 +7,10 @@ if tokenizer.pad_token is None:
   tokenizer.add_special_tokens({'pad_token': '[PAD]'})
   var_model.resize_token_embeddings(len(tokenizer))
 
-# query=input()
-# context=search_context(query)
-
-# checkpoint_path = '/content/drive/MyDrive/Local_Tour_Guide/context_answer/lora_params_epoch_15.pt'
-# load_lora_params(var_model, checkpoint_path,"context")
-
-test_model=var_model
+import os
+current_dir=os.path.realpath(os.path.dirname(__file__))
+checkpoint_path =os.path.join(current_dir,'lora_params_epoch_15.pt')
+load_lora_params(var_model, checkpoint_path,"context")
 
 def generate_response(prompt,test_model=var_model,max_length=128, num_return_sequences=1):
     test_model.eval()

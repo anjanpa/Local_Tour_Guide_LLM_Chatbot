@@ -117,8 +117,6 @@
                                 <label class="form-label" for="textAreaExample">Type your message</label>
                             </div>
                             <button type="submit" id="wssubmit" class="btn btn-primary mt-3">Submit</button>
-
-
                         </div>
                     </div>
 
@@ -150,16 +148,13 @@
                 }));
 
                 let newMessageDiv = document.createElement('div');
-                newMessageDiv.classList.add('d-flex', 'flex-row', 'justify-content-start', 'mb-4');
+                newMessageDiv.classList.add('d-flex', 'flex-row', 'justify-content-end', 'mb-4');
 
                 // Create the inner content of the message
-                newMessageDiv.innerHTML = `
-                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
-                    <div class="p-3 ms-3 border bg-body-tertiary" style="border-radius: 15px;">
-                        <p class="small mb-0">${message}</p>
-                    </div>
-                   
-                `;
+                newMessageDiv.innerHTML = ` <div class="p-3 me-3 border bg-body-tertiary" style="border-radius: 15px;">
+                    <p class="small mb-0">${message}</p>
+                </div>
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">`;
 
                 // Append the new message to the chat container (assumed to have an id 'chat-container')
                 document.getElementById('chat-container').appendChild(newMessageDiv);
@@ -169,30 +164,27 @@
         ws.onmessage = function (event) {
             console.log("Message received from server", event.data);
             console.log("type of message received...", typeof (event.data));
-
+            
             // Assuming the server sends JSON data
-            const data = event.data;
-            console.log("Parsed Data.....", data);
-            console.log("type of parsed data", typeof (data));
-
+            const data =event.data;
+            let res=JSON.parse(data);
+            let response=res.response;
+            let questions=res.intents;
             // Create a new message div element
             let newMessageDiv = document.createElement('div');
-            newMessageDiv.classList.add('d-flex', 'flex-row', 'justify-content-end', 'mb-4');
-
+            newMessageDiv.classList.add('d-flex', 'flex-row', 'justify-content-start', 'mb-4');
+            console.log(data);
+            console.log("Parsed Data.....", data);
+            console.log("type of parsed data", typeof (data));
             // Create the inner content of the message
-            newMessageDiv.innerHTML = `
-                <div class="p-3 me-3 border bg-body-tertiary" style="border-radius: 15px;">
-                    <p class="small mb-0">${data}</p>
-                </div>
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
-            `;
-
+            newMessageDiv.innerHTML = `<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+                    <div class="p-3 ms-3 border bg-body-tertiary" style="border-radius: 15px;">
+                        <p class="small mb-0">${response}</p>
+                    </div>`;
             // Append the new message to the chat container (assumed to have an id 'chat-container')
             document.getElementById('chat-container').appendChild(newMessageDiv);
             scrollToBottom();
-
         };
-
         ws.onclose = function (event) {
             console.log("Websocket connection closed unexpectedly...", event);
         };
