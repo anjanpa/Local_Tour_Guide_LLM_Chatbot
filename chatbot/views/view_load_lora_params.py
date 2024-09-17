@@ -8,18 +8,18 @@ def load_lora_params(var_model, checkpoint_path,task="context"):
 
       # Define LoRA configuration
       lora_config = LoraConfig(
-          r=8,              # LoRA rank (size of LoRA matrices)
-          lora_alpha=16,     # Scaling factor
-          lora_dropout=0.1,  # Dropout probability
-          target_modules=['q', 'v', 'k']  # Modify specific layers (query, key, value in attention)
-      )
+        r=8,
+        lora_alpha=16,
+        lora_dropout=0.1,
+        target_modules=['q','v','k'],
+        )
         # Apply LoRA to the T5 model
       var_model = get_peft_model(var_model, lora_config)
 
       # Load LoRA parameters from checkpoint
       device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
       lora_params = torch.load(checkpoint_path, map_location=device,weights_only=True)
-
+      lora_params=lora_params['lora_params']
       # Update model parameters with the LoRA parameters
       model_state_dict = var_model.state_dict()
 

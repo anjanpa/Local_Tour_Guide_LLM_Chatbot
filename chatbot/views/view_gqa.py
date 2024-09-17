@@ -9,7 +9,7 @@ if tokenizer.pad_token is None:
 
 import os
 current_dir=os.path.realpath(os.path.dirname(__file__))
-checkpoint_path =os.path.join(current_dir,'lora_params_epoch_15.pt')
+checkpoint_path =os.path.join(current_dir,'checkpoint_epoch_25.pt')
 load_lora_params(var_model, checkpoint_path,"context")
 
 def generate_response(prompt,test_model=var_model,max_length=128, num_return_sequences=1):
