@@ -26,7 +26,7 @@ media/
 __pycache__/
 
 # Environment
-./final_model
+/chatbot/views/final_model/
 .env
 .env.*
 .venv/

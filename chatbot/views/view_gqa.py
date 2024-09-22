@@ -1,5 +1,6 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from .view_load_lora_params import load_lora_params 
+
 ## Loading required model and tokenizer
 var_model = T5ForConditionalGeneration.from_pretrained('t5-base')
 tokenizer = T5Tokenizer.from_pretrained('t5-base',clean_up_tokenization_spaces=True,legacy=False)
@@ -12,7 +13,11 @@ current_dir=os.path.realpath(os.path.dirname(__file__))
 checkpoint_path =os.path.join(current_dir,'checkpoint_epoch_25.pt')
 load_lora_params(var_model, checkpoint_path,"context")
 
-def generate_response(prompt,test_model=var_model,max_length=128, num_return_sequences=1):
+import os
+json_path =os.path.join(current_dir,'final_model')
+loaded_model = T5ForConditionalGeneration.from_pretrained(json_path)
+
+def generate_response(prompt,test_model=loaded_model,max_length=128, num_return_sequences=1):
     test_model.eval()
     # Tokenize the input prompt
     input_ids = tokenizer.encode(prompt, return_tensors='pt')
