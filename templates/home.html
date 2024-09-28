@@ -116,6 +116,30 @@
                                     rows="4"></textarea>
                                 <label class="form-label" for="textAreaExample">Type your message</label>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div data-mdb-input-init class="form-outline">
+                                        <label class="form-label" for="srcLangSelect">Source Language</label>
+                                        <select id="src_lang">
+                                            {% for lang in languages %}
+                                              <option value="{{ lang.code }}" {% if lang.code == 'en_XX' %}selected{% endif %}>{{ lang.language }}</option>
+                                            {% endfor %}
+                                          </select>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-6">
+                                    <div data-mdb-input-init class="form-outline">
+                                        <label class="form-label" for="tgtLangSelect">Target Language</label>
+                                        <select id="tgt_lang">
+                                            {% for lang in languages %}
+                                              <option value="{{ lang.code }}" {% if lang.code == 'en_XX' %}selected{% endif %}>{{lang.language}}</option>
+                                            {% endfor %}
+                                          </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <button type="submit" id="wssubmit" class="btn btn-primary mt-3">Submit</button>
                         </div>
                     </div>
@@ -142,9 +166,13 @@
         document.getElementById('wssubmit').onclick =
             function (event) {
                 const messageInputDom = document.getElementById('textAreaExample');
+                const src_lang=document.getElementById("src_lang").value;
+                const tgt_lang=document.getElementById("tgt_lang").value;
                 const message = messageInputDom.value;
                 ws.send(JSON.stringify({
-                    "msg": message
+                    "msg": message,
+                    "src_lang":src_lang,
+                    "tgt_lang":tgt_lang
                 }));
 
                 let newMessageDiv = document.createElement('div');
