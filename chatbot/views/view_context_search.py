@@ -42,13 +42,12 @@ def search_in_vectordb_cosine(query, k=1):
 
     with open(json_path, 'r') as f:
       cleaned_documents=json.load(f)
-    texts = [doc['title'] + ": " + doc['description'] for doc in cleaned_documents]
 
     ## read vector db embedddings
     index = faiss.read_index(os.path.join(current_dir,'project_index_cosine.idx'))
 
     ## perform query
-    model = SentenceTransformer('bert-base-nli-mean-tokens')
+    model = SentenceTransformer('all-MiniLM-L6-v2')
 
     # Normalize the query embedding
     query_embedding = model.encode([query])[0]
@@ -58,6 +57,6 @@ def search_in_vectordb_cosine(query, k=1):
     distances, indices = index.search(np.array([query_embedding]), k)
 
     print(distances,indices)
-    matching_documents = [texts[i] for i in indices[0]]
-    print(matching_documents)
+    matching_documents = [cleaned_documents[i] for i in indices[0]]
+    print("documents matched:",matching_documents)
     return matching_documents
