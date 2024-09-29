@@ -1,7 +1,6 @@
 Here’s a sample `README.md` for your **Local Tour Guide Django** project. This can be customized as needed to match the exact details and requirements of your project.
 
 ---
-
 # Local Tour Guide Django
 
 A Django-based web application for guiding users through local tour experiences. The app provides information about various local cultural, historical, and tourist sites based on user queries, integrating a chatbot that answers questions about local culture, history, hiking, religious sites, and more in their native language.
