@@ -1,4 +1,3 @@
---
 # Local Tour Guide Django
 
 A Django-based web application for guiding users through local tour experiences. The app provides information about various local cultural, historical, and tourist sites based on user queries, integrating a chatbot that answers questions about local culture, history, hiking, religious sites, and more in their native language.
@@ -75,6 +74,7 @@ pip install -r requirements.txt
 The project integrates a custom chatbot to handle user queries regarding local tours. It is powered by a fine-tuned T5-base model for generating responses based on the context provided by the user.
 
 Key technologies used:
+- **Django Channels**: For websocket and full duplex communication
 - **FAISS**: For indexing and retrieving relevant context from a local knowledge base.
 - **T5-base Model**: Fine-tuned for context-based generative answering.
 
